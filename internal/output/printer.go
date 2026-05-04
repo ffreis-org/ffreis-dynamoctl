@@ -6,28 +6,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"text/tabwriter"
 	"time"
 
 	"github.com/ffreis/dynamoctl/internal/store"
+	"github.com/ffreis/dynamoctl/internal/ui"
 )
 
 // Printer writes command output in either JSON or human-readable text format.
 type Printer struct {
-	W    io.Writer
-	JSON bool
+	W      io.Writer
+	Format string
+	UI     *ui.Presenter
 }
 
 // New returns a Printer configured to write to w.
-func New(w io.Writer, asJSON bool) *Printer {
-	return &Printer{W: w, JSON: asJSON}
+func New(w io.Writer, format string, presenter *ui.Presenter) *Printer {
+	return &Printer{W: w, Format: format, UI: presenter}
+}
+
+func (p *Printer) isJSON() bool {
+	return p != nil && p.Format == "json"
+}
+
+func (p *Printer) status(kind, label, detail string) error {
+	if p != nil && p.UI != nil {
+		_, err := fmt.Fprintln(p.W, p.UI.Status(kind, label, detail))
+		return err
+	}
+	_, err := fmt.Fprintf(p.W, "[%s] %s\n", label, detail)
+	return err
 }
 
 // --- set / delete / generic success ---
 
 // PrintSetResult reports a successful set operation.
 func (p *Printer) PrintSetResult(namespace, name string, version int) error {
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(map[string]any{
 			jsonKeyAction:    actionSet,
 			jsonKeyNamespace: namespace,
@@ -35,21 +51,19 @@ func (p *Printer) PrintSetResult(namespace, name string, version int) error {
 			jsonKeyVersion:   version,
 		})
 	}
-	_, err := fmt.Fprintf(p.W, "set %s/%s (version %d)\n", namespace, name, version)
-	return err
+	return p.status("ok", "ok", fmt.Sprintf("set %s/%s (version %d)", namespace, name, version))
 }
 
 // PrintDeleteResult reports a successful delete operation.
 func (p *Printer) PrintDeleteResult(namespace, name string) error {
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(map[string]any{
 			jsonKeyAction:    actionDeleted,
 			jsonKeyNamespace: namespace,
 			jsonKeyName:      name,
 		})
 	}
-	_, err := fmt.Fprintf(p.W, "deleted %s/%s\n", namespace, name)
-	return err
+	return p.status("ok", "ok", fmt.Sprintf("deleted %s/%s", namespace, name))
 }
 
 // --- get ---
@@ -70,7 +84,7 @@ func (p *Printer) PrintGetResult(item *store.Item, decryptedValue string) error 
 	if decryptedValue != "" {
 		val = decryptedValue
 	}
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(GetResult{
 			Namespace: item.Namespace,
 			Name:      item.Name,
@@ -97,7 +111,7 @@ type ItemView struct {
 
 // PrintListResult prints a list of items.
 func (p *Printer) PrintListResult(items []store.Item) error {
-	if p.JSON {
+	if p.isJSON() {
 		views := make([]ItemView, len(items))
 		for i, it := range items {
 			views[i] = ItemView{
@@ -112,8 +126,7 @@ func (p *Printer) PrintListResult(items []store.Item) error {
 	}
 
 	if len(items) == 0 {
-		_, err := fmt.Fprintln(p.W, "(no items)")
-		return err
+		return p.status("muted", "skip", "no items")
 	}
 
 	tw := tabwriter.NewWriter(p.W, 0, 0, 2, ' ', 0)
@@ -135,7 +148,7 @@ func (p *Printer) PrintListResult(items []store.Item) error {
 
 // PrintRotateResult reports the outcome of a key rotation.
 func (p *Printer) PrintRotateResult(namespace string, rotated, skipped, failed int) error {
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(map[string]any{
 			jsonKeyAction:    actionRotate,
 			jsonKeyNamespace: namespace,
@@ -144,31 +157,33 @@ func (p *Printer) PrintRotateResult(namespace string, rotated, skipped, failed i
 			jsonKeyFailed:    failed,
 		})
 	}
-	_, err := fmt.Fprintf(p.W, "rotated %d items, skipped %d (plaintext), failed %d\n",
-		rotated, skipped, failed)
-	return err
+	parts := []string{
+		fmt.Sprintf("rotated %d", rotated),
+		fmt.Sprintf("skipped %d plaintext", skipped),
+		fmt.Sprintf("failed %d", failed),
+	}
+	return p.status("info", "ok", strings.Join(parts, "  "))
 }
 
 // --- backup ---
 
 // PrintBackupResult reports a completed backup.
 func (p *Printer) PrintBackupResult(s3URI string, count int) error {
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(map[string]any{
 			jsonKeyAction:    actionBackup,
 			jsonKeyS3URI:     s3URI,
 			jsonKeyItemCount: count,
 		})
 	}
-	_, err := fmt.Fprintf(p.W, "backup complete: %s (%d items)\n", s3URI, count)
-	return err
+	return p.status("ok", "ok", fmt.Sprintf("backup complete: %s (%d items)", s3URI, count))
 }
 
 // --- restore ---
 
 // PrintRestoreResult reports a completed restore.
 func (p *Printer) PrintRestoreResult(restored, skipped int, errs []string) error {
-	if p.JSON {
+	if p.isJSON() {
 		return p.writeJSON(map[string]any{
 			jsonKeyAction:   actionRestore,
 			jsonKeyRestored: restored,
@@ -176,9 +191,8 @@ func (p *Printer) PrintRestoreResult(restored, skipped int, errs []string) error
 			jsonKeyErrors:   errs,
 		})
 	}
-	_, err := fmt.Fprintf(p.W, "restore complete: %d restored, %d skipped, %d errors\n",
-		restored, skipped, len(errs))
-	return err
+	return p.status("ok", "ok", fmt.Sprintf("restore complete: %d restored, %d skipped, %d errors",
+		restored, skipped, len(errs)))
 }
 
 // --- helpers ---

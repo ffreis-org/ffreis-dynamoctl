@@ -30,7 +30,7 @@ Use --namespace / -n to target a different namespace.`,
 				return fmt.Errorf("listing items: %w", err)
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintListResult(items)
 		},
 	}

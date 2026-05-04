@@ -345,7 +345,7 @@ func TestRotateCmdRotatesSingleItem(t *testing.T) {
 	if updateCalls != 1 {
 		t.Fatalf("expected 1 update call, got %d", updateCalls)
 	}
-	if !strings.Contains(out.String(), "rotated 1 items") {
+	if !strings.Contains(out.String(), "rotated 1") {
 		t.Fatalf(errFmtUnexpectedOut, out.String())
 	}
 }
@@ -435,7 +435,7 @@ func TestVersionCmdTextAndJSON(t *testing.T) {
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf(errFmtExecute, err)
 	}
-	if !strings.Contains(out.String(), "dynamoctl") {
+	if !strings.Contains(out.String(), "commit=") {
 		t.Fatalf(errFmtUnexpectedOut, out.String())
 	}
 

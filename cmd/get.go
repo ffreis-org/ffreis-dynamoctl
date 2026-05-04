@@ -42,7 +42,7 @@ DYNAMOCTL_KEY before printing.  Pass --raw to print the ciphertext as-is.`,
 				return err
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintGetResult(item, decrypted)
 		},
 	}

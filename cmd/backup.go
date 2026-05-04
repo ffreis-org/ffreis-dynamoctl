@@ -64,7 +64,7 @@ Examples:
 				return fmt.Errorf("backup failed: %w", err)
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintBackupResult(s3URI, count)
 		},
 	}

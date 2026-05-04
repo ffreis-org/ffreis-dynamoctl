@@ -57,7 +57,7 @@ Examples:
 				return fmt.Errorf("restore failed: %w", err)
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintRestoreResult(result.Restored, result.Skipped, result.Errors)
 		},
 	}

@@ -42,7 +42,7 @@ func newDeleteCmd() *cobra.Command {
 				return fmt.Errorf("deleting item: %w", err)
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintDeleteResult(flagNamespace, name)
 		},
 	}

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -10,19 +10,31 @@ import (
 func newVersionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "Print version information",
+		Short: "Print build information",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if flagJSON {
+			v := strings.TrimSpace(version)
+			if v == "" {
+				v = "dev"
+			}
+			c := strings.TrimSpace(commit)
+			if c == "" {
+				c = "unknown"
+			}
+			t := strings.TrimSpace(buildTime)
+			if t == "" {
+				t = "unknown"
+			}
+
+			if currentOutput() == "json" {
 				enc := json.NewEncoder(cmd.OutOrStdout())
 				enc.SetIndent("", "  ")
 				return enc.Encode(map[string]any{
-					"version":    version,
-					"commit":     commit,
-					"build_time": buildTime,
+					"version":    v,
+					"commit":     c,
+					"build_time": t,
 				})
 			}
-			_, err := fmt.Fprintf(cmd.OutOrStdout(), "dynamoctl %s (commit %s, built %s)\n",
-				version, commit, buildTime)
+			_, err := cmd.OutOrStdout().Write([]byte(v + " (commit=" + c + " built=" + t + ")\n"))
 			return err
 		},
 	}
