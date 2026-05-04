@@ -42,7 +42,7 @@ DYNAMOCTL_KEY before printing.  Pass --raw to print the ciphertext as-is.`,
 				return err
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintGetResult(item, decrypted)
 		},
 	}
@@ -57,7 +57,7 @@ func getItemForGetCmd(ctx context.Context, st store.Store, namespace, name strin
 		return item, nil
 	}
 	if errors.Is(err, store.ErrNotFound) {
-		return nil, fmt.Errorf("key %q not found in namespace %q", name, namespace)
+		return nil, fmt.Errorf("key %q not found in namespace %q: %w", name, namespace, store.ErrNotFound)
 	}
 	return nil, fmt.Errorf("retrieving item: %w", err)
 }

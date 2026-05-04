@@ -20,8 +20,8 @@ const (
 // helpers
 // ---------------------------------------------------------------------------
 
-func textPrinter(buf *bytes.Buffer) *Printer { return New(buf, false) }
-func jsonPrinter(buf *bytes.Buffer) *Printer { return New(buf, true) }
+func textPrinter(buf *bytes.Buffer) *Printer { return New(buf, "text", nil) }
+func jsonPrinter(buf *bytes.Buffer) *Printer { return New(buf, "json", nil) }
 
 func decodeJSON(t *testing.T, buf *bytes.Buffer, v any) {
 	t.Helper()

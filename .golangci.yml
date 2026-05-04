@@ -1,42 +1,59 @@
+version: "2"
+
 run:
   timeout: 5m
-  go: "1.24"
+  tests: true
 
 linters:
+  default: none
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
+    # Correctness
+    - govet          # go vet (shadowed vars, printf mismatches, etc.)
+    - errcheck       # unchecked errors
+    - staticcheck    # staticcheck suite (SA*, ST*, QF*, S*)
+    - ineffassign    # assignments with no effect
+    - unused         # unexported symbols that are never used
+
+    # Style
+    - misspell       # common English misspellings
+
+    # Security
+    - gosec          # G-code security rules (hardcoded credentials, path traversal, etc.)
+
+    # Bugs
+    - bodyclose      # HTTP response body must be closed
+    - noctx          # HTTP requests must carry context
+    - copyloopvar    # loop variable capture bugs
+
+    # Maintainability
+    - godot          # comments must end in a period
+    - nolintlint     # nolint directives must be specific and justified
+  settings:
+    govet:
+      enable:
+        - copylocks
+    errcheck:
+      check-type-assertions: true
+      check-blank: false  # `_ = expr` is intentional in tests
+    godot:
+      scope: declarations
+      capital: false
+  exclusions:
+    rules:
+      - path: "_test\\.go"
+        linters: [errcheck, gosec]
+      - path: "vendor/"
+        linters: [all]
+
+formatters:
+  enable:
     - gofmt
     - goimports
-    - gocritic
-    - gosec
-    - misspell
-    - noctx
-    - prealloc
-    - unconvert
-    - unparam
-    - whitespace
-
-linters-settings:
-  goimports:
-    local-prefixes: github.com/ffreis/dynamoctl
-  gosec:
-    excludes:
-      - G115  # integer overflow (false positives in SDK code)
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - performance
-      - style
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/ffreis
 
 issues:
-  exclude-rules:
-    # Test helpers often ignore errors intentionally.
-    - path: "_test\\.go"
-      linters: [errcheck, gosec]
   max-issues-per-linter: 0
   max-same-issues: 0

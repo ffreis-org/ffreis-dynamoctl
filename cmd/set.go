@@ -59,7 +59,7 @@ The value may be supplied as a positional argument or piped via stdin
 				return err
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintSetResult(flagNamespace, name, version)
 		},
 	}

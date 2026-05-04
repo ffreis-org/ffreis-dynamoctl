@@ -71,7 +71,7 @@ Example:
 				result.rotated++
 			}
 
-			p := output.New(cmd.OutOrStdout(), flagJSON)
+			p := output.New(cmd.OutOrStdout(), currentOutput(), cliUI)
 			return p.PrintRotateResult(flagNamespace, result.rotated, result.skipped, result.failed)
 		},
 	}

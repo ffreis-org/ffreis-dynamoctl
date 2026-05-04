@@ -1,5 +1,6 @@
 BINARY      := dynamoctl
 MODULE      := github.com/ffreis/dynamoctl
+CMD_PKG     := ./cmd/$(BINARY)
 GO          ?= $(shell command -v go 2>/dev/null || echo /usr/local/go/bin/go)
 VERSION     ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 COMMIT      ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -18,7 +19,7 @@ all: fmt-check lint test build  ## Run all quality gates and build
 ## ── Build ──────────────────────────────────────────────────────────────────
 
 build:  ## Build the binary
-	$(GO) build -trimpath $(LDFLAGS) -o $(BINARY) .
+	$(GO) build -trimpath $(LDFLAGS) -o $(BINARY) $(CMD_PKG)
 
 ## ── Testing ────────────────────────────────────────────────────────────────
 
