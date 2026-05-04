@@ -7,12 +7,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.29.0
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.18.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.56.2
-<<<<<<< HEAD
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.97.1
-	github.com/charmbracelet/lipgloss v1.0.0
-=======
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.99.0
->>>>>>> origin/main
+	github.com/charmbracelet/lipgloss v1.0.0
 	github.com/spf13/cobra v1.8.1
 )
 

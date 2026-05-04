@@ -19,7 +19,8 @@ configuration state.
 ## Structure
 
 ```
-cmd/dynamoctl/    ← Cobra CLI entry point
+cmd/dynamoctl/    ← main package entry point (calls cmd.Execute())
+cmd/              ← Cobra CLI commands (package cmd)
 internal/         ← config, AWS SDK helpers, output formatting
 ```
 
@@ -27,9 +28,9 @@ internal/         ← config, AWS SDK helpers, output formatting
 
 ```bash
 make build
-./bin/dynamoctl list --table ffreis-tf-locks-prod
-./bin/dynamoctl get --table ffreis-tf-locks-prod --key <lock-id>
-./bin/dynamoctl delete --table ffreis-tf-locks-prod --key <lock-id>
+./dynamoctl list --table ffreis-tf-locks-prod
+./dynamoctl get --table ffreis-tf-locks-prod --key <lock-id>
+./dynamoctl delete --table ffreis-tf-locks-prod --key <lock-id>
 ```
 
 ## Keeping this file current
