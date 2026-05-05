@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -44,8 +45,9 @@ var (
 )
 
 const (
-	exitOK    = 0
-	exitError = 1
+	exitOK       = 0
+	exitError    = 1
+	exitNotFound = 2
 )
 
 // rootCmd is the top-level command.
@@ -83,6 +85,9 @@ func executeCommand(cmd *cobra.Command, stderr io.Writer) int {
 		if message := err.Error(); message != "" {
 			_, _ = io.WriteString(stderr, "error: "+message+"\n")
 		}
+		if errors.Is(err, store.ErrNotFound) {
+			return exitNotFound
+		}
 		return exitError
 	}
 	return exitOK
@@ -115,7 +120,7 @@ func init() {
 	f.StringVar(&flagEncryptionKey, "encryption-key",
 		os.Getenv(appcfg.EnvKey),
 		"AES-256 key as 64-char hex string (env: "+appcfg.EnvKey+")")
-	f.StringVar(&flagOutput, "output", "text", "Output format: text, json, table")
+	f.StringVar(&flagOutput, "output", "text", "Output format: text, json")
 	f.BoolVar(&flagJSON, "json", false, "Deprecated: alias for --output=json")
 	f.StringVar(&flagLogLevel, "log-level", "info",
 		"Log level: debug, info, warn, error")
@@ -169,12 +174,10 @@ func currentOutput() string {
 		return "json"
 	}
 	switch output := strings.ToLower(strings.TrimSpace(flagOutput)); output {
-	case "", "text":
+	case "", "text", "table":
 		return "text"
 	case "json":
 		return "json"
-	case "table":
-		return "table"
 	default:
 		return "text"
 	}
