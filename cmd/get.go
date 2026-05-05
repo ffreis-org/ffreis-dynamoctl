@@ -57,7 +57,7 @@ func getItemForGetCmd(ctx context.Context, st store.Store, namespace, name strin
 		return item, nil
 	}
 	if errors.Is(err, store.ErrNotFound) {
-		return nil, fmt.Errorf("key %q not found in namespace %q", name, namespace)
+		return nil, fmt.Errorf("key %q not found in namespace %q: %w", name, namespace, store.ErrNotFound)
 	}
 	return nil, fmt.Errorf("retrieving item: %w", err)
 }

@@ -2,8 +2,8 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
-dynamoctl
-dynamoctl-*
+/dynamoctl
+/dynamoctl-*
 *.exe
 *.exe~
 *.dll
