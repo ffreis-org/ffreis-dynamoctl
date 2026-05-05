@@ -17,8 +17,8 @@ func TestResolveMode(t *testing.T) {
 		wantInterac bool
 		wantErr     bool
 	}{
-		// auto — interactive terminal, no NO_COLOR → rich
-		{name: "auto tty rich", requested: "auto", stdoutTTY: true, stderrTTY: false, noColor: false, wantMode: ModeRich, wantInterac: true},
+		// auto — stdout TTY, no stderr TTY, no NO_COLOR → rich+interactive
+		{name: "auto stdout-tty rich", requested: "auto", stdoutTTY: true, stderrTTY: false, noColor: false, wantMode: ModeRich, wantInterac: true},
 		// auto — no TTY → plain
 		{name: "auto no-tty plain", requested: "auto", stdoutTTY: false, stderrTTY: false, noColor: false, wantMode: ModePlain, wantInterac: false},
 		// auto — NO_COLOR set → plain even with TTY
@@ -29,7 +29,7 @@ func TestResolveMode(t *testing.T) {
 		{name: "empty as auto", requested: "", stdoutTTY: false, stderrTTY: false, noColor: false, wantMode: ModePlain, wantInterac: false},
 		// plain always returns plain
 		{name: "plain explicit", requested: "plain", stdoutTTY: true, stderrTTY: true, noColor: false, wantMode: ModePlain, wantInterac: true},
-		// rich — no NO_COLOR → rich
+		// rich — no NO_COLOR → rich; explicit mode always sets interactive=true regardless of TTY
 		{name: "rich explicit", requested: "rich", stdoutTTY: false, stderrTTY: false, noColor: false, wantMode: ModeRich, wantInterac: true},
 		// rich — NO_COLOR set → downgrade to plain
 		{name: "rich nocolor", requested: "rich", stdoutTTY: false, stderrTTY: false, noColor: true, wantMode: ModePlain, wantInterac: true},
