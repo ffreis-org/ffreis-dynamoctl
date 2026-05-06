@@ -29,8 +29,8 @@ internal/         ← config, AWS SDK helpers, output formatting
 ```bash
 make build
 ./dynamoctl list --table ffreis-tf-locks-prod
-./dynamoctl get --table ffreis-tf-locks-prod --key <lock-id>
-./dynamoctl delete --table ffreis-tf-locks-prod --key <lock-id>
+./dynamoctl get --table ffreis-tf-locks-prod <lock-id>
+./dynamoctl delete --table ffreis-tf-locks-prod <lock-id>
 ```
 
 ## Keeping this file current
