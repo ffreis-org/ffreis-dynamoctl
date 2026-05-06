@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -35,7 +34,7 @@ func newVersionCmd() *cobra.Command {
 					"build_time": t,
 				})
 			}
-			_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s (commit=%s built=%s)\n", v, c, t)
+			_, err := cmd.OutOrStdout().Write([]byte(v + " (commit=" + c + " built=" + t + ")\n"))
 			return err
 		},
 	}

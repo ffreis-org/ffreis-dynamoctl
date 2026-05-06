@@ -143,6 +143,13 @@ func setupCLI(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	switch strings.ToLower(strings.TrimSpace(flagOutput)) {
+	case "", "text", "json":
+		// valid
+	default:
+		return fmt.Errorf("invalid output format %q: must be one of: text, json", flagOutput)
+	}
+
 	presenter, err := ui.New(flagUI)
 	if err != nil {
 		return err
