@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   release:
+    timeout-minutes: 30
     name: Build & release
     runs-on: ubuntu-latest
     strategy:
