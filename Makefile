@@ -9,7 +9,7 @@ LDFLAGS     := -ldflags "-X '$(MODULE)/cmd.version=$(VERSION)' \
                           -X '$(MODULE)/cmd.commit=$(COMMIT)' \
                           -X '$(MODULE)/cmd.buildTime=$(BUILD_TIME)'"
 COVERAGE_THRESHOLD := 80
-GOTEST      := $(GO) test -timeout 60s -race
+GOTEST      := $(GO) test -timeout 60s -race -shuffle=on
 
 .PHONY: all build test lint fmt fmt-check tidy coverage coverage-gate \
         lefthook-install clean smoke help
