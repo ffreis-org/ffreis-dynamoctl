@@ -158,7 +158,7 @@ func Restore(ctx context.Context, st store.Store, s3c S3Client, opts RestoreOpti
 	if err != nil {
 		return nil, fmt.Errorf("downloading backup from s3://%s/%s: %w", opts.Bucket, opts.Key, err)
 	}
-	defer out.Body.Close()
+	defer func() { _ = out.Body.Close() }() // close is best-effort after the body is fully read
 
 	var manifest Manifest
 	if err := json.NewDecoder(out.Body).Decode(&manifest); err != nil {

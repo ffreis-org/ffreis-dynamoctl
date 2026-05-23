@@ -130,13 +130,14 @@ func (p *Printer) PrintListResult(items []store.Item) error {
 	}
 
 	tw := tabwriter.NewWriter(p.W, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(tw, "NAMESPACE\tNAME\tENCRYPTED\tVERSION\tUPDATED")
+	// Writes to a buffered tabwriter — errors surface on Flush at the end.
+	_, _ = fmt.Fprintln(tw, "NAMESPACE\tNAME\tENCRYPTED\tVERSION\tUPDATED")
 	for _, it := range items {
 		enc := "no"
 		if it.Encrypted {
 			enc = "yes"
 		}
-		fmt.Fprintf(tw, "%s\t%s\t%s\t%d\t%s\n",
+		_, _ = fmt.Fprintf(tw, "%s\t%s\t%s\t%d\t%s\n",
 			it.Namespace, it.Name, enc, it.Version,
 			it.UpdatedAt.Format(time.RFC3339),
 		)
