@@ -44,6 +44,7 @@ jobs:
       working-directory: "."
 
   test:
+    if: ${{ !github.event.pull_request.draft }}
     needs: [fmt]
     uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-test.yml@2dc66b62be7f8685244fed807fcb160c7ba7af24
     with:

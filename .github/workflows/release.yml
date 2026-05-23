@@ -9,8 +9,13 @@ permissions:
   contents: write
   id-token: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release:
+    timeout-minutes: 30
     name: Build & release
     runs-on: ubuntu-latest
     strategy:
