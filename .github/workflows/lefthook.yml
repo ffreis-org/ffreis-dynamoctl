@@ -1,0 +1,18 @@
+name: Lefthook
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lefthook:
+    uses: FelipeFuhr/ffreis-workflows-general/.github/workflows/general-lefthook.yml@55caebd74b1d1057c52ab6745d5809bddc8406de # v1.4.1
+    with:
+      working-directory: "."
+      lefthook-bootstrap-command: "make lefthook-bootstrap"
+      lefthook-bin: ".bin/lefthook"

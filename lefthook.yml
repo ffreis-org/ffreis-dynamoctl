@@ -1,51 +1,6 @@
-min_version: 1.6.0
-
-pre-commit:
-  parallel: true
-  commands:
-    fmt-check:
-      glob: "*.go"
-      run: gofmt -l -s {staged_files} | tee /dev/stderr | (! grep .)
-      fail_text: "Run 'make fmt' to fix formatting"
-    lint:
-      run: golangci-lint run ./...
-      fail_text: "Fix lint errors before committing"
-    secrets-scan:
-      run: git diff --cached --diff-filter=ACM | grep -iE '(AKIA|password\s*=|secret\s*=|api.?key\s*=)' && echo "Possible secret detected!" && exit 1 || exit 0
-      fail_text: "Remove secrets from staged files"
-
-    agents-drift-hint:
-      run: |
-        changed=$(git diff --cached --name-only 2>/dev/null)
-        if echo "$changed" | grep -qE '\.(go|py|rs|tf)$' && \
-           ! echo "$changed" | grep -q 'AGENTS\.md'; then
-          echo "hint: source files changed — check if AGENTS.md needs updating" >&2
-        fi
-        exit 0
-
-commit-msg:
-  commands:
-    format-check:
-      run: |
-        msg=$(cat {1})
-        if ! echo "$msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|ci|build|perf|revert)(\(.+\))?: .{1,72}'; then
-          echo "Commit message must follow Conventional Commits:"
-          echo "  type(scope): description"
-          echo "  e.g. feat(crypto): add key rotation support"
-          exit 1
-        fi
-      fail_text: "Use Conventional Commits format: type(scope): description"
-
-pre-push:
-  commands:
-    test:
-      run: go test -timeout 60s -race ./...
-      fail_text: "Tests must pass before pushing"
-    coverage-gate:
-      run: scripts/hooks/check_coverage_gate.sh
-      fail_text: "Code coverage below threshold"
-    tidy-check:
-      run: |
-        go mod tidy
-        git diff --exit-code go.mod go.sum
-      fail_text: "Run 'go mod tidy' and stage go.mod/go.sum"
+remotes:
+  - git_url: https://github.com/FelipeFuhr/ffreis-platform-standards
+    ref: v1.3.0
+    configs:
+      - lefthook/base.yml
+      - lefthook/go.yml
