@@ -84,3 +84,16 @@ ci-local: ## Run workflows locally via act (GH Actions quota fallback). Args via
 	@curl -fsSL "$(PLATFORM_STANDARDS_RAW)/$(PLATFORM_STANDARDS_SHA)/scripts/run-ci-local.sh" \
 		-o scripts/run-ci-local.sh && chmod +x scripts/run-ci-local.sh
 	@PATH="$(CURDIR)/.bin:$(PATH)" bash ./scripts/run-ci-local.sh $(ARGS)
+
+# --- lefthook (simple set on commit; complex/release via /ready + manual CI) ---
+LEFTHOOK_VERSION ?= 1.7.10
+LEFTHOOK_DIR ?= $(CURDIR)/.bin
+LEFTHOOK_BIN ?= $(LEFTHOOK_DIR)/lefthook
+secrets-scan-staged:
+	@command -v gitleaks >/dev/null 2>&1 && gitleaks protect --staged --redact || echo "gitleaks not installed; skipping"
+lefthook-bootstrap:
+	LEFTHOOK_VERSION="$(LEFTHOOK_VERSION)" BIN_DIR="$(LEFTHOOK_DIR)" bash ./scripts/bootstrap_lefthook.sh
+lefthook-install: lefthook-bootstrap
+	LEFTHOOK="$(LEFTHOOK_BIN)" "$(LEFTHOOK_BIN)" install
+setup: lefthook-install
+	@echo "lefthook hooks installed"
