@@ -73,10 +73,11 @@ func resolveSetValue(stdin io.Reader, useStdin bool, args []string) (string, err
 	switch {
 	case useStdin:
 		return readStdinValue(stdin)
-	case len(args) == 2 && args[1] == "-":
+	case len(args) == 2 && args[1] == "-": //nolint:gosec // guarded by len(args)==2 in the case condition
 		return readStdinValue(stdin)
 	case len(args) == 2:
-		return args[1], nil
+		val := args[1] //nolint:gosec // guarded by len(args)==2 in the case condition
+		return val, nil
 	default:
 		return "", fmt.Errorf("provide a value as argument or use --stdin")
 	}
