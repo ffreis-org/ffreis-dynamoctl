@@ -39,3 +39,4 @@ go.work.sum
 # OS
 .DS_Store
 Thumbs.db
+.scannerwork/
