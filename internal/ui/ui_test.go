@@ -43,22 +43,27 @@ func TestResolveMode(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			mode, interactive, err := ResolveMode(tc.requested, tc.stdoutTTY, tc.stderrTTY, tc.noColor)
-			if tc.wantErr {
-				if err == nil {
-					t.Errorf("expected error, got mode=%q interactive=%v", mode, interactive)
-				}
-				return
-			}
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if mode != tc.wantMode {
-				t.Errorf("mode: got %q, want %q", mode, tc.wantMode)
-			}
-			if interactive != tc.wantInterac {
-				t.Errorf("interactive: got %v, want %v", interactive, tc.wantInterac)
-			}
+			assertResolveModeResult(t, err, mode, interactive, tc.wantErr, tc.wantMode, tc.wantInterac)
 		})
+	}
+}
+
+func assertResolveModeResult(t *testing.T, err error, mode string, interactive bool, wantErr bool, wantMode string, wantInterac bool) {
+	t.Helper()
+	if wantErr {
+		if err == nil {
+			t.Errorf("expected error, got mode=%q interactive=%v", mode, interactive)
+		}
+		return
+	}
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if mode != wantMode {
+		t.Errorf("mode: got %q, want %q", mode, wantMode)
+	}
+	if interactive != wantInterac {
+		t.Errorf("interactive: got %v, want %v", interactive, wantInterac)
 	}
 }
 
