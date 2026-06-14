@@ -20,38 +20,40 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   mod-tidy:
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-mod-tidy-check.yml@d9b0146bb491bf06a79c9c6289034537522cbed3
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-mod-tidy-check.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
-      go-version: "1.25.8"
+      go-version: "1.25.11"
       working-directory: "."
 
   fmt:
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-fmt.yml@d9b0146bb491bf06a79c9c6289034537522cbed3
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-fmt.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
-      go-version: "1.25.8"
+      go-version: "1.25.11"
       working-directory: "."
 
   lint:
     needs: [fmt]
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-lint.yml@d9b0146bb491bf06a79c9c6289034537522cbed3
+      pull-requests: read
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-lint.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
-      go-version: "1.25.8"
+      go-version: "1.25.11"
       working-directory: "."
 
   test:
-    if: ${{ !github.event.pull_request.draft }}
     needs: [fmt]
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-test.yml@4beb951b978e6993e6802256b23e472da072683d
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-test.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
-      go-version: "1.25.8"
+      go-version: "1.25.11"
       working-directory: "."
