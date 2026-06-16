@@ -20,7 +20,7 @@ import (
 	"github.com/ffreis/dynamoctl/internal/backup"
 	appcfg "github.com/ffreis/dynamoctl/internal/config"
 	"github.com/ffreis/dynamoctl/internal/store"
-	"github.com/ffreis/dynamoctl/internal/ui"
+	"github.com/ffreis/platform-cli/pkg/ui"
 )
 
 // Build-time variables injected via -ldflags.

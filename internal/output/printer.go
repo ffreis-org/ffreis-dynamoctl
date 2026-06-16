@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/ffreis/dynamoctl/internal/store"
-	"github.com/ffreis/dynamoctl/internal/ui"
+	"github.com/ffreis/platform-cli/pkg/ui"
 )
 
 // Printer writes command output in either JSON or human-readable text format.
