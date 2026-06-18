@@ -79,7 +79,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-semgrep-sarif.yml@4beb951b978e6993e6802256b23e472da072683d
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-semgrep-sarif.yml@1651792817a59920bb4de6626c1d5a307c2edb0f
     with:
       working-directory: "."
       upload-sarif: false
