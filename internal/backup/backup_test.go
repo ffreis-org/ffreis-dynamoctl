@@ -79,8 +79,8 @@ func (f *fakeStore) Delete(_ context.Context, ns, name string) error {
 	return nil
 }
 
-func (f *fakeStore) ScanNamespace(_ context.Context, ns string) ([]store.Item, error) {
-	return f.scanNS(ns)
+func (f *fakeStore) ScanNamespace(ctx context.Context, ns string) ([]store.Item, error) {
+	return f.List(ctx, ns)
 }
 
 func (f *fakeStore) ScanAll(_ context.Context) ([]store.Item, error) {
