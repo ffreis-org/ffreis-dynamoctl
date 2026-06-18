@@ -10,8 +10,9 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/FelipeFuhr/ffreis-platform-cli/pkg/ui"
+
 	"github.com/ffreis/dynamoctl/internal/store"
-	"github.com/ffreis/dynamoctl/internal/ui"
 )
 
 // Printer writes command output in either JSON or human-readable text format.

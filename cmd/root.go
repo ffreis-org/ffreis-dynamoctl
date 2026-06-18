@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/FelipeFuhr/ffreis-platform-cli/pkg/ui"
 	awsconfig "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	awsdynamodb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -20,7 +21,6 @@ import (
 	"github.com/ffreis/dynamoctl/internal/backup"
 	appcfg "github.com/ffreis/dynamoctl/internal/config"
 	"github.com/ffreis/dynamoctl/internal/store"
-	"github.com/ffreis/dynamoctl/internal/ui"
 )
 
 // Build-time variables injected via -ldflags.
