@@ -254,3 +254,119 @@ func TestPrintRestoreResultJSONIncludesErrors(t *testing.T) {
 		t.Errorf("want 2 errors in JSON, got %v", m[jsonKeyErrors])
 	}
 }
+
+// ---------------------------------------------------------------------------
+// PrintDescribeResult
+// ---------------------------------------------------------------------------
+
+func baseTableInfo() TableInfo {
+	return TableInfo{
+		TableName:   "my-table",
+		Status:      "ACTIVE",
+		BillingMode: "PAY_PER_REQUEST",
+		ItemCount:   42,
+		SizeBytes:   1024,
+		KeySchema: []KeyAttr{
+			{Name: "pk", KeyType: "HASH", AttrType: "S"},
+			{Name: "sk", KeyType: "RANGE", AttrType: "N"},
+		},
+	}
+}
+
+func TestPrintDescribeResultTextContainsTableName(t *testing.T) {
+	var buf bytes.Buffer
+	if err := textPrinter(&buf).PrintDescribeResult(baseTableInfo()); err != nil {
+		t.Fatalf("PrintDescribeResult: %v", err)
+	}
+	out := buf.String()
+	for _, want := range []string{"my-table", "ACTIVE", "PAY_PER_REQUEST", "42", "1024", "pk", "sk"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("want %q in output, got:\n%s", want, out)
+		}
+	}
+}
+
+func TestPrintDescribeResultTextShowsKeyTypes(t *testing.T) {
+	var buf bytes.Buffer
+	_ = textPrinter(&buf).PrintDescribeResult(baseTableInfo())
+	out := buf.String()
+	if !strings.Contains(out, "HASH") {
+		t.Errorf("want 'HASH' in output, got %q", out)
+	}
+	if !strings.Contains(out, "RANGE") {
+		t.Errorf("want 'RANGE' in output, got %q", out)
+	}
+}
+
+func TestPrintDescribeResultTextShowsGSI(t *testing.T) {
+	info := baseTableInfo()
+	info.GSIs = []GSIView{
+		{
+			Name:       "gsi-email",
+			Status:     "ACTIVE",
+			Projection: "ALL",
+			KeySchema:  []KeyAttr{{Name: "email", KeyType: "HASH", AttrType: "S"}},
+		},
+	}
+
+	var buf bytes.Buffer
+	if err := textPrinter(&buf).PrintDescribeResult(info); err != nil {
+		t.Fatalf("PrintDescribeResult with GSI: %v", err)
+	}
+	out := buf.String()
+	if !strings.Contains(out, "gsi-email") {
+		t.Errorf("want GSI name 'gsi-email', got:\n%s", out)
+	}
+	if !strings.Contains(out, "email") {
+		t.Errorf("want GSI key 'email', got:\n%s", out)
+	}
+}
+
+func TestPrintDescribeResultTextNoGSIsSection(t *testing.T) {
+	var buf bytes.Buffer
+	_ = textPrinter(&buf).PrintDescribeResult(baseTableInfo())
+	if strings.Contains(buf.String(), "GSI") {
+		t.Errorf("expected no GSI section for table without GSIs, got:\n%s", buf.String())
+	}
+}
+
+func TestPrintDescribeResultJSONRoundtrip(t *testing.T) {
+	info := baseTableInfo()
+	info.GSIs = []GSIView{
+		{
+			Name:       "gsi-status",
+			Status:     "ACTIVE",
+			Projection: "KEYS_ONLY",
+			KeySchema:  []KeyAttr{{Name: "status", KeyType: "HASH", AttrType: "S"}},
+		},
+	}
+
+	var buf bytes.Buffer
+	if err := jsonPrinter(&buf).PrintDescribeResult(info); err != nil {
+		t.Fatalf("PrintDescribeResult JSON: %v", err)
+	}
+
+	var got TableInfo
+	if err := json.Unmarshal(buf.Bytes(), &got); err != nil {
+		t.Fatalf("decode JSON: %v — raw: %s", err, buf.String())
+	}
+
+	if got.TableName != "my-table" {
+		t.Errorf("table_name: want my-table, got %q", got.TableName)
+	}
+	if got.ItemCount != 42 {
+		t.Errorf("item_count: want 42, got %d", got.ItemCount)
+	}
+	if got.BillingMode != "PAY_PER_REQUEST" {
+		t.Errorf("billing_mode: want PAY_PER_REQUEST, got %q", got.BillingMode)
+	}
+	if len(got.KeySchema) != 2 {
+		t.Fatalf("key_schema: want 2 entries, got %d", len(got.KeySchema))
+	}
+	if got.KeySchema[0].Name != "pk" || got.KeySchema[0].KeyType != "HASH" {
+		t.Errorf("key_schema[0]: want pk/HASH, got %+v", got.KeySchema[0])
+	}
+	if len(got.GSIs) != 1 || got.GSIs[0].Name != "gsi-status" {
+		t.Errorf("gsis: want [{gsi-status ...}], got %+v", got.GSIs)
+	}
+}
