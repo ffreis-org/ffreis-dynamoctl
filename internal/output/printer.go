@@ -197,6 +197,75 @@ func (p *Printer) PrintRestoreResult(restored, skipped int, errs []string) error
 		restored, skipped, len(errs)))
 }
 
+// --- describe ---
+
+// KeyAttr describes one key attribute (PK or SK).
+type KeyAttr struct {
+	Name     string `json:"name"`
+	KeyType  string `json:"key_type"`  // HASH or RANGE
+	AttrType string `json:"attr_type"` // S, N, or B
+}
+
+// GSIView describes a global secondary index.
+type GSIView struct {
+	Name       string    `json:"name"`
+	Status     string    `json:"status"`
+	Projection string    `json:"projection"` // ALL, KEYS_ONLY, or INCLUDE
+	KeySchema  []KeyAttr `json:"key_schema"`
+}
+
+// TableInfo is the payload returned by PrintDescribeResult.
+type TableInfo struct {
+	TableName   string    `json:"table_name"`
+	Status      string    `json:"status"`
+	BillingMode string    `json:"billing_mode"`
+	ItemCount   int64     `json:"item_count"`
+	SizeBytes   int64     `json:"size_bytes"`
+	KeySchema   []KeyAttr `json:"key_schema"`
+	GSIs        []GSIView `json:"gsis,omitempty"`
+}
+
+// PrintDescribeResult prints table schema and metadata.
+func (p *Printer) PrintDescribeResult(info TableInfo) error {
+	if p.isJSON() {
+		return p.writeJSON(info)
+	}
+
+	tw := tabwriter.NewWriter(p.W, 0, 0, 2, ' ', 0)
+	_, _ = fmt.Fprintf(tw, "TABLE\t%s\n", info.TableName)
+	_, _ = fmt.Fprintf(tw, "STATUS\t%s\n", info.Status)
+	_, _ = fmt.Fprintf(tw, "BILLING\t%s\n", info.BillingMode)
+	_, _ = fmt.Fprintf(tw, "ITEMS\t%d\n", info.ItemCount)
+	_, _ = fmt.Fprintf(tw, "SIZE\t%d bytes\n", info.SizeBytes)
+	if err := tw.Flush(); err != nil {
+		return err
+	}
+
+	_, _ = fmt.Fprintln(p.W)
+	tw2 := tabwriter.NewWriter(p.W, 0, 0, 2, ' ', 0)
+	_, _ = fmt.Fprintln(tw2, "KEY\tKEY TYPE\tATTR TYPE")
+	for _, k := range info.KeySchema {
+		_, _ = fmt.Fprintf(tw2, "%s\t%s\t%s\n", k.Name, k.KeyType, k.AttrType)
+	}
+	if err := tw2.Flush(); err != nil {
+		return err
+	}
+
+	for _, gsi := range info.GSIs {
+		_, _ = fmt.Fprintln(p.W)
+		_, _ = fmt.Fprintf(p.W, "GSI  %s  (%s, projection: %s)\n", gsi.Name, gsi.Status, gsi.Projection)
+		tw3 := tabwriter.NewWriter(p.W, 2, 0, 2, ' ', 0)
+		_, _ = fmt.Fprintln(tw3, "  KEY\tKEY TYPE\tATTR TYPE")
+		for _, k := range gsi.KeySchema {
+			_, _ = fmt.Fprintf(tw3, "  %s\t%s\t%s\n", k.Name, k.KeyType, k.AttrType)
+		}
+		if err := tw3.Flush(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // --- helpers ---
 
 func (p *Printer) writeJSON(v any) error {
