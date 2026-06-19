@@ -95,8 +95,15 @@ func executeCommand(cmd *cobra.Command, stderr io.Writer) int {
 
 // Factories used by commands; overridden in tests.
 var (
-	storeFactory    = func(ctx context.Context) (store.Store, error) { return newAWSStore(ctx) }
-	s3ClientFactory = func(ctx context.Context) (backup.S3Client, error) { return newAWSS3Client(ctx) }
+	storeFactory     = func(ctx context.Context) (store.Store, error) { return newAWSStore(ctx) }
+	s3ClientFactory  = func(ctx context.Context) (backup.S3Client, error) { return newAWSS3Client(ctx) }
+	ddbClientFactory = func(ctx context.Context) (*awsdynamodb.Client, error) {
+		cfg, err := newAWSConfig(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return awsdynamodb.NewFromConfig(cfg), nil
+	}
 )
 
 var loadDefaultConfig = config.LoadDefaultConfig
@@ -131,6 +138,7 @@ func init() {
 		newGetCmd(),
 		newListCmd(),
 		newDeleteCmd(),
+		newDescribeCmd(),
 		newRotateCmd(),
 		newBackupCmd(),
 		newRestoreCmd(),
