@@ -26,7 +26,7 @@ jobs:
   mod-tidy:
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-mod-tidy-check.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-mod-tidy-check.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
       go-version: "1.25.11"
       working-directory: "."
@@ -34,7 +34,7 @@ jobs:
   fmt:
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-fmt.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-fmt.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
       go-version: "1.25.11"
       working-directory: "."
@@ -44,7 +44,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-lint.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-lint.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
       go-version: "1.25.11"
       working-directory: "."
@@ -53,7 +53,7 @@ jobs:
     needs: [fmt]
     permissions:
       contents: read
-    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-test.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-test.yml@796c71fd32741742ac14e0f717997297d1e0dbfb # v1.1.2
     with:
       go-version: "1.25.11"
       working-directory: "."
