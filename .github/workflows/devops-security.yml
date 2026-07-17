@@ -69,7 +69,7 @@ jobs:
   govulncheck:
     permissions:
       contents: read
-    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-security.yml@4beb951b978e6993e6802256b23e472da072683d
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-security.yml@cfd442e1b94d8849321f969978ef9a79bf01fa6a
     with:
       go-version: "1.25.8"
       working-directory: "."
@@ -79,7 +79,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-semgrep-sarif.yml@1651792817a59920bb4de6626c1d5a307c2edb0f
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-semgrep-sarif.yml@cfd442e1b94d8849321f969978ef9a79bf01fa6a
     with:
       working-directory: "."
       upload-sarif: false
@@ -111,7 +111,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-snyk.yml@d707b489cae8f852d64a8c1bb6788a7a098ccac9
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-snyk.yml@cfd442e1b94d8849321f969978ef9a79bf01fa6a
     with:
       working-directory: "."
       upload-sarif: false
