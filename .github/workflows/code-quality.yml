@@ -23,7 +23,7 @@ jobs:
   sonar:
     permissions:
       contents: read
-    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-sonar.yml@e181683a6f01ea59aa0de41f8d5ec39e74c5b8ec
+    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-sonar.yml@ba8575070827b3f4c74a7568d425c7d3e12d50a6
     with:
       runner: '["self-hosted","local"]'
       go-version: "1.25"
