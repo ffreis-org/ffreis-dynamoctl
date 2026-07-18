@@ -25,7 +25,7 @@ jobs:
       contents: read
     uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-sonar.yml@e181683a6f01ea59aa0de41f8d5ec39e74c5b8ec
     with:
-      runner: \'["self-hosted","local"]\'
+      runner: '["self-hosted","local"]'
       go-version: "1.25"
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
