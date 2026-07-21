@@ -54,7 +54,7 @@ jobs:
       working-directory: "."
       scan-history: true
       upload-sarif: false
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   codeql:
     permissions:
       actions: read
@@ -65,7 +65,7 @@ jobs:
       languages: "go"
       source-root: "."
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   govulncheck:
     permissions:
       contents: read
@@ -74,7 +74,7 @@ jobs:
       go-version: "1.25.8"
       working-directory: "."
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   semgrep:
     permissions:
       contents: read
@@ -84,7 +84,7 @@ jobs:
       working-directory: "."
       upload-sarif: false
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   osv:
     needs: changes
     if: |
@@ -102,7 +102,7 @@ jobs:
       working-directory: "."
       upload-sarif: false
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   snyk:
     # Disabled by default because the reusable workflow will fail when SNYK_TOKEN
     # is missing/empty. Enable explicitly by setting repository variable:
@@ -115,6 +115,6 @@ jobs:
     with:
       working-directory: "."
       upload-sarif: false
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

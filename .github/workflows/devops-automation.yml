@@ -25,7 +25,7 @@ jobs:
     with:
       upload-sarif: true
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   stale:
     if: |
       (vars.FLEET_SPOT_CI != 'true' || github.event_name == 'workflow_dispatch') &&
@@ -38,7 +38,7 @@ jobs:
     with:
       only: "both"
 
-      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["self-hosted","spot","linux","x64"]' }}
+      runner: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && '["ubuntu-latest"]' || '["ubuntu-latest"]' }}
   release-please:
     if: vars.RELEASE_PLEASE_ENABLED == 'true' && github.event_name == 'push'
     permissions:
